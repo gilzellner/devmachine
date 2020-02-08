@@ -1,0 +1,101 @@
+#!/bin/bash
+
+export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
+alias ping='ping -c 5'
+alias fastping='ping -c 100 -s.2'
+alias ports='netstat -tulanp'
+
+# Pipe anything into `clip` to forward it to Clipper
+alias clip="nc localhost 8377"
+alias sshc="ssh -R localhost:8377:localhost:8377"
+
+alias vagrantssh="vagrant ssh -- -R localhost:8377:localhost:8377"
+
+alias apt-get="sudo apt-get"
+
+alias root='sudo -i'
+alias su='sudo -i'
+
+alias meminfo='free -m -l -t'
+alias psmem='ps auxf | sort -nr -k 4'
+alias psmem10='ps auxf | sort -nr -k 4 | head -10'
+alias pscpu='ps auxf | sort -nr -k 3'
+alias pscpu10='ps auxf | sort -nr -k 3 | head -10'
+
+alias s3get='s3cmd get'
+alias s3set='s3cmd set'
+
+alias ssh_to_home_dl='ssh gil@192.168.1.26'
+
+function randpass {
+	passlength=6
+	[ ! -z "$1" ] && passlength=$1
+	printf "%s\n" `< /dev/urandom tr -dc A-Za-z0-9 | head -c$passlength`
+}
+
+
+
+function showlog  {
+     less +G $(ls -ctr1 $1/* | tail -1)
+ }
+
+
+function switchknife {
+    if [ ! -f ~/.chef/knife-$1.rb ]; then
+        echo "No such environment $1"
+    else
+        ln -sf knife-$1.rb ~/.chef/knife.rb
+    fi
+}
+
+
+alias reset_wifi_if_down_continuous='while true; do; sleep 60; reset_wifi_if_connection_down; done'
+
+st () {
+	 add-zsh-hook  -D preexec _terminal-set-titles-with-command
+	 add-zsh-hook  -D precmd  _terminal-set-titles-with-path
+    set-window-title $1
+    set-tab-title $1
+}
+
+alias docker-gc='docker run --rm --userns host -v /var/run/docker.sock:/var/run/docker.sock -v /etc:/etc spotify/docker-gc'
+
+alias git_commit_all_push_current_branch='git add -A; git commit -m $(git rev-parse --abbrev-ref HEAD); git push origin $(git rev-parse --abbrev-ref HEAD)'
+
+alias pull_all_master='for d in */ ; do; cd $d && git checkout master && git pull && cd .. ; done'
+
+alias update_install_all='for d in */ ; do; cd $d && [[ -f setup.py ]] && pip install -e . && cd .. ; done'
+
+alias vagrant_new_machine='vagrant destroy -f; date; vagrant up; vagrant ssh'
+
+alias git_sync_forked_repo='git fetch upstream; git checkout master; git merge upstream/master; git merge upstream/master'
+
+alias histgrep='cat $HISTFILE | grep $1'
+
+alias git_fetch_upstream_master_merge_push='git fetch upstream; git merge upstream/master; git push'
+
+alias git_back_to_master='git checkout master; git pull'
+
+alias ecr_login='$(aws ecr get-login --no-include-email --region us-east-1)'
+
+alias reset_bt='sudo rm -f /Library/Preferences/com.apple.Bluetooth.plist'
+
+alias wifi_set='networksetup -setairportpower en0 $1'
+
+alias wifi_on='wifi_set on'
+alias wifi_off='wifi_set off'
+
+alias wifi_reset='wifi_set off;wifi_set on'
+
+alias airport='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport $1'
+
+export GIT_EDITOR=vim
+
+function reset_wifi_if_connection_down {
+    if ping -q -c 1 -W 1 8.8.8.8 >/dev/null; then  
+       echo "IPv4 is up" 
+    else 
+       echo "IPv4 is down, resetting wifi" 
+       wifi_reset 
+    fi
+}
